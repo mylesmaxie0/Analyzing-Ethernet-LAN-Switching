@@ -17,5 +17,6 @@ This lab reinforces foundational networking concepts aligned with CCNA-level swi
 #
 
 ## Network Topology
+<img width="1687" height="1003" alt="Screenshot 2026-02-11 at 3 01 17 PM" src="https://github.com/user-attachments/assets/4f9f0cc4-c362-4329-b74e-9a7d5b1d56c7" />
 
 
