@@ -82,8 +82,63 @@ Frame 8 contains the ARP Reply from PC4. In this response, PC4 provides its hard
 
 #
 
-#### SW1's updated MAC-Address Table
-<img width="905" height="188" alt="Screenshot 2026-02-11 at 3 47 36 PM" src="https://github.com/user-attachments/assets/06e6bfb1-7be1-4b31-89f2-e6fdd5a0b3b9" />
+### ICMP Frame Analysis
+This phase demonstrates how traffic flows after MAC address resolution has completed. Once the switch knows the destination MAC, traffic is forwarded as a known unicast.
 
-You can now observe that SW1’s CAM table contains dynamically learned entries for both PC1 and PC4. The switch has associated each MAC address with the corresponding ingress port from which the frames were received. This confirms that SW1 successfully performed MAC address learning during the ARP exchange and can now forward subsequent unicast traffic between the two hosts without flooding.
+This validates:
+- Deterministic frame forwarding
+- Proper CAM table usage
+- Elimination of unnecessary flooding
 
+#### Expected Behavior
+1. ICMP Echo Request sent from PC1 to PC2.
+2. Frame is forwarded only to the port associated with PC2’s MAC.
+3. No broadcast flooding occurs.
+4. Echo Reply follows the same unicast path back.
+
+#### Wireshark Capture 
+<img width="1725" height="971" alt="Screenshot 2026-02-11 at 4 08 04 PM" src="https://github.com/user-attachments/assets/26b5784f-3f6a-4874-8e6d-e2f4b2f845ed" />
+
+You can now observe that ICMP traffic between PC1 and PC4 is being forwarded as known unicast frames. Because SW1 previously learned both MAC addresses during the ARP exchange, the switch is able to reference its CAM table and forward each ICMP Echo Request and Echo Reply directly to the appropriate port. No flooding occurs during this phase.
+
+#
+
+### Switch MAC Address Table Verification
+This phase confirms that the switch dynamically learned MAC addresses from source fields of incoming frames and correctly associated them with physical ports.
+
+This validates:
+- MAC learning logic
+- Port-to-MAC mapping
+- Dynamic entry behavior
+- Aging timer function
+
+#### Switch MAC Address Table 
+<img width="938" height="289" alt="Screenshot 2026-02-11 at 4 14 21 PM" src="https://github.com/user-attachments/assets/bca910e9-725e-4671-ba5d-4b0dbcbf485c" />
+
+#### Expected Output Behavior
+- Each active host MAC address appears in the table
+- Entries are marked as “Dynamic.”
+- Each MAC is mapped to the correct switch port
+- Entries will age out after inactivity (typically 300 seconds = 5 Minutes)
+
+#### Key Insight
+
+The switch does not know MAC addresses beforehand. It builds its forwarding intelligence entirely from observed traffic.
+
+#
+
+### Why These Phases Matter
+
+Together, these phases prove:
+1. ARP enables Layer 3 communication.
+2. Switches flood only when necessary.
+3. Once learned, unicast forwarding is precise.
+4. Ethernet switching is entirely MAC-driven.
+
+#
+
+### Conclusion
+
+This lab demonstrated how Ethernet LAN switching works in a real environment using Wireshark and switch verification. By analyzing ARP and ICMP traffic, we observed how the switch dynamically learns MAC addresses, populates its CAM table, and transitions from broadcast discovery to efficient unicast forwarding.
+
+The packet captures confirmed that ARP enables initial communication, and once MAC addresses are learned, the switch forwards traffic directly without flooding. Overall, this project reinforced core Layer 2 switching concepts through practical analysis and validation.
